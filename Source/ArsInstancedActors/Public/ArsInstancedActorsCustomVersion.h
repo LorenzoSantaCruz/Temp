@@ -2,9 +2,10 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "Misc/Guid.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 struct FArsInstancedActorsCustomVersion
 {
@@ -19,10 +20,9 @@ struct FArsInstancedActorsCustomVersion
 	};
 
 	// The GUID for this custom version number
-	UE_API const static FGuid GUID;
+	const static FGuid GUID;
 
 private:
 	FArsInstancedActorsCustomVersion() {}
 };
 
-#undef UE_API

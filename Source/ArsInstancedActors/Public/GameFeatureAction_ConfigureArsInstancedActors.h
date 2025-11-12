@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "GameFeatureAction.h"
 #include "ArsInstancedActorsSettings.h"
 #include "GameFeatureAction_ConfigureArsInstancedActors.generated.h"
@@ -11,7 +13,7 @@
  * GameplayFeature Action carrying overrides to ArsInstancedActors settings
  */
 UCLASS(meta = (DisplayName = "Configure ArsInstancedActors"))
-class UGameFeatureAction_ConfigureArsInstancedActors : public UGameFeatureAction
+class ARSMECHANICA_API UGameFeatureAction_ConfigureArsInstancedActors : public UGameFeatureAction
 {
 	GENERATED_BODY()
 

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "DrawDebugHelpers.h"
 #include "EngineDefines.h"
 #include "Logging/LogMacros.h"

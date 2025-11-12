@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "DataRegistryId.h"
 #include "Engine/DeveloperSettings.h"
 #include "UObject/SoftObjectPtr.h"
@@ -48,7 +50,7 @@ struct FClassConfigOverrideEntry
  * @see AArsInstancedActorsManager
  */
 UCLASS(Config=ArsInstancedActors, defaultconfig, DisplayName = "Instanced Actors", MinimalAPI)
-class UArsInstancedActorsProjectSettings : public UDeveloperSettings
+class ARSMECHANICA_API UArsInstancedActorsProjectSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 
@@ -57,10 +59,10 @@ public:
 
 	UArsInstancedActorsProjectSettings();
 
-	ARSINSTANCEDACTORS_API TSubclassOf<UMassActorSpawnerSubsystem> GetServerActorSpawnerSubsystemClass() const;
-	ARSINSTANCEDACTORS_API TSubclassOf<UMassActorSpawnerSubsystem> GetClientActorSpawnerSubsystemClass() const;
-	ARSINSTANCEDACTORS_API TSubclassOf<UArsInstancedActorsSubsystem> GetArsInstancedActorsSubsystemClass() const;
-	ARSINSTANCEDACTORS_API TSubclassOf<UMassStationaryDistanceVisualizationTrait> GetStationaryVisualizationTraitClass() const;
+	TSubclassOf<UMassActorSpawnerSubsystem> GetServerActorSpawnerSubsystemClass() const;
+	TSubclassOf<UMassActorSpawnerSubsystem> GetClientActorSpawnerSubsystemClass() const;
+	TSubclassOf<UArsInstancedActorsSubsystem> GetArsInstancedActorsSubsystemClass() const;
+	TSubclassOf<UMassStationaryDistanceVisualizationTrait> GetStationaryVisualizationTraitClass() const;
 
 	void RegisterConfigOverride(UObject& Owner, const FArsInstancedActorsConfig& Config);
 	void UnregisterConfigOverride(UObject& Owner);

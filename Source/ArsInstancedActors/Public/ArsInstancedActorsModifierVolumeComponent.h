@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "ArsInstancedActorsTypes.h"
 #include "Components/PrimitiveComponent.h"
 #include "Containers/BitArray.h"
@@ -25,13 +27,13 @@ enum class EArsInstancedActorsVolumeShape : uint8
  * @see UArsInstancedActorsModifierBase
  */
 UCLASS(MinimalAPI, ClassGroup="Instanced Actors", HideCategories=(Object, HLOD, Lighting, VirtualTexture, Collision, TextureStreaming, Mobile, Physics, Tags, AssetUserData, Activation, Cooking, Navigation, Input, Mobility), Meta=(BlueprintSpawnableComponent))
-class UArsInstancedActorsModifierVolumeComponent : public UPrimitiveComponent
+class ARSMECHANICA_API UArsInstancedActorsModifierVolumeComponent : public UPrimitiveComponent
 {
 	GENERATED_BODY()
 
 public:
 
-	ARSINSTANCEDACTORS_API UArsInstancedActorsModifierVolumeComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UArsInstancedActorsModifierVolumeComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	// Volume bounds shape
 	// Note: Replicated only in the initial bunch
@@ -108,20 +110,20 @@ public:
 	bool TryRunPendingModifiers(AArsInstancedActorsManager& Manager, TBitArray<>& InOutPendingModifiers);
 
 	//~ Begin UObject overrides
-	ARSINSTANCEDACTORS_API virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	//~ End UObject overrides
 
 	//~ Begin UActorComponent overrides
-	ARSINSTANCEDACTORS_API virtual void BeginPlay() override;
-	ARSINSTANCEDACTORS_API virtual void EndPlay(EEndPlayReason::Type Reason) override;
+	virtual void BeginPlay() override;
+	virtual void EndPlay(EEndPlayReason::Type Reason) override;
 	//~ End UActorComponent overrides
 
 	//~ Begin USceneComponent overrides
-	ARSINSTANCEDACTORS_API virtual FBoxSphereBounds CalcBounds(const FTransform& LocalToWorld) const override;
+	virtual FBoxSphereBounds CalcBounds(const FTransform& LocalToWorld) const override;
 	//~ End USceneComponent overrides
 
 	//~ Begin USceneComponent overrides
-	ARSINSTANCEDACTORS_API FPrimitiveSceneProxy* CreateSceneProxy();
+	FPrimitiveSceneProxy* CreateSceneProxy();
 	//~ End USceneComponent overrides
 
 protected:
@@ -135,7 +137,7 @@ protected:
 
 /** A UArsInstancedActorsModifierVolumeComponent with a URemoveArsInstancedActorsModifier modifier pre-added to Modifiers */
 UCLASS(MinimalAPI, Meta=(BlueprintSpawnableComponent))
-class URemoveInstancesModifierVolumeComponent : public UArsInstancedActorsModifierVolumeComponent
+class ARSMECHANICA_API URemoveInstancesModifierVolumeComponent : public UArsInstancedActorsModifierVolumeComponent
 {
 	GENERATED_BODY()
 

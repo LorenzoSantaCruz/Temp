@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "MassProcessor.h"
 #include "ArsInstancedActorsTypes.h"
 #include "StructUtils/SharedStruct.h"
@@ -9,7 +11,7 @@
 
 
 UCLASS()
-class UArsInstancedActorsStationaryLODBatchProcessor : public UMassProcessor
+class ARSMECHANICA_API UArsInstancedActorsStationaryLODBatchProcessor : public UMassProcessor
 {
 	GENERATED_BODY()
 	

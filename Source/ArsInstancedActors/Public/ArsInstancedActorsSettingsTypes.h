@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "Engine/DataTable.h"
 #include "GameFramework/Actor.h"
 #include "StructUtils/StructView.h"
@@ -9,7 +11,6 @@
 #include "GameplayTagContainer.h"
 #include "ArsInstancedActorsSettingsTypes.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 
 // Helper macro for FArsInstancedActorsSettings::OverrideIfDefault
@@ -242,15 +243,15 @@ struct FArsInstancedActorsSettings : public FTableRowBase
 	virtual void PostSerialize(const FArchive& Ar) {}
 #endif
 
-	UE_API void ComputeLODDistanceData(double& OutMaxInstanceDistance, double& MaxDrawDistanceScale, float& OutLODDistanceScale) const;
+	void ComputeLODDistanceData(double& OutMaxInstanceDistance, double& MaxDrawDistanceScale, float& OutLODDistanceScale) const;
 
-	UE_API bool GetAffectDistanceFieldLighting() const;
+	bool GetAffectDistanceFieldLighting() const;
 
 	// Apply OverrideSettings to settings not already overridden
 	// Note: This is designed for applying settings in reverse order i.e: applying highest priority settings first.
-	UE_API virtual void OverrideIfDefault(FConstStructView OverrideSettings, const FName& OverrideSettingsName);
+	virtual void OverrideIfDefault(FConstStructView OverrideSettings, const FName& OverrideSettingsName);
 
-	UE_API virtual FString DebugToString(bool bOverridesOnly = true) const;
+	virtual FString DebugToString(bool bOverridesOnly = true) const;
 };
 
 #if WITH_EDITORONLY_DATA
@@ -336,4 +337,3 @@ struct FArsInstancedActorsClassSettings : public FArsInstancedActorsClassSetting
 	virtual FInstancedStruct MakeOverrideSettings() const { return FInstancedStruct::Make<FArsInstancedActorsSettings>(OverrideSettings); }
 };
 
-#undef UE_API

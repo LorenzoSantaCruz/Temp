@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "MassRepresentationProcessor.h"
 #include "ArsInstancedActorsVisualizationProcessor.generated.h"
 
@@ -17,7 +19,7 @@ struct FArsInstancedActorsVisualizationProcessorTag : public FMassTag
 };
 
 UCLASS()
-class UArsInstancedActorsVisualizationProcessor : public UMassVisualizationProcessor
+class ARSMECHANICA_API UArsInstancedActorsVisualizationProcessor : public UMassVisualizationProcessor
 {
 	GENERATED_BODY()
 

@@ -1,0 +1,9 @@
+#pragma once
+
+#ifndef ARSMECHANICA_API
+#ifdef ARSINSTANCEDACTORS_API
+#define ARSMECHANICA_API ARSINSTANCEDACTORS_API
+#else
+#define ARSMECHANICA_API
+#endif
+#endif

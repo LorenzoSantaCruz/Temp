@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "ArsInstancedActorsDebug.h"
 #include "ArsInstancedActorsManager.h"
 #include "GameplayTagContainer.h"
@@ -33,16 +35,16 @@ struct FExemplarActorData;
  * @see AArsInstancedActorsManager
  */
 UCLASS(MinimalAPI, BlueprintType)
-class UArsInstancedActorsSubsystem : public UTickableWorldSubsystem
+class ARSMECHANICA_API UArsInstancedActorsSubsystem : public UTickableWorldSubsystem
 {
 	GENERATED_BODY()
 
 public:
-	ARSINSTANCEDACTORS_API UArsInstancedActorsSubsystem();
+	UArsInstancedActorsSubsystem();
 
-	ARSINSTANCEDACTORS_API static UArsInstancedActorsSubsystem* Get(UObject* WorldContextObject);
+	static UArsInstancedActorsSubsystem* Get(UObject* WorldContextObject);
 
-	ARSINSTANCEDACTORS_API static UArsInstancedActorsSubsystem& GetChecked(UObject* WorldContextObject);
+	static UArsInstancedActorsSubsystem& GetChecked(UObject* WorldContextObject);
 
 #if WITH_EDITOR
 	/** 
@@ -50,7 +52,7 @@ public:
 	* @param AdditionalInstanceTags Gameplay tags that will get appended to class-based FArsInstancedActorsSettings::GameplayTags
 	* @see UArsInstancedActorsProjectSettings::GridSize
 	*/	
-	ARSINSTANCEDACTORS_API FArsInstancedActorsInstanceHandle InstanceActor(TSubclassOf<AActor> ActorClass, FTransform InstanceTransform, ULevel* Level
+	FArsInstancedActorsInstanceHandle InstanceActor(TSubclassOf<AActor> ActorClass, FTransform InstanceTransform, ULevel* Level
 		, const FGameplayTagContainer& AdditionalInstanceTags = FGameplayTagContainer());
 
 	/** 
@@ -59,7 +61,7 @@ public:
 	* @see UArsInstancedActorsProjectSettings::GridSize
 	*/	
 	UFUNCTION(BlueprintCallable, Category = ArsInstancedActors)
-	ARSINSTANCEDACTORS_API FArsInstancedActorsInstanceHandle InstanceActor(TSubclassOf<AActor> ActorClass, FTransform InstanceTransform, ULevel* Level
+	FArsInstancedActorsInstanceHandle InstanceActor(TSubclassOf<AActor> ActorClass, FTransform InstanceTransform, ULevel* Level
 		, const FGameplayTagContainer& AdditionalInstanceTags, TSubclassOf<AArsInstancedActorsManager> ManagerClass);
 
 	/**
@@ -74,13 +76,13 @@ public:
 	 * @see IA.CompactInstances console command
      */
 	UFUNCTION(BlueprintCallable, Category = ArsInstancedActors)
-	ARSINSTANCEDACTORS_API bool RemoveActorInstance(const FArsInstancedActorsInstanceHandle& InstanceHandle, bool bDestroyManagerIfEmpty = true);
+	bool RemoveActorInstance(const FArsInstancedActorsInstanceHandle& InstanceHandle, bool bDestroyManagerIfEmpty = true);
 #endif // WITH_EDITOR
 
-	ARSINSTANCEDACTORS_API void ForEachManager(const FBox& QueryBounds, TFunctionRef<bool(AArsInstancedActorsManager&)> InOperation
+	void ForEachManager(const FBox& QueryBounds, TFunctionRef<bool(AArsInstancedActorsManager&)> InOperation
 		, TSubclassOf<AArsInstancedActorsManager> ManagerClass = AArsInstancedActorsManager::StaticClass()) const;
-	ARSINSTANCEDACTORS_API void ForEachModifierVolume(const FBox& QueryBounds, TFunctionRef<bool(UArsInstancedActorsModifierVolumeComponent&)> InOperation) const;
-	ARSINSTANCEDACTORS_API void ForEachInstance(const FBox& QueryBounds, TFunctionRef<bool(const FArsInstancedActorsInstanceHandle&
+	void ForEachModifierVolume(const FBox& QueryBounds, TFunctionRef<bool(UArsInstancedActorsModifierVolumeComponent&)> InOperation) const;
+	void ForEachInstance(const FBox& QueryBounds, TFunctionRef<bool(const FArsInstancedActorsInstanceHandle&
 		, const FTransform&, FArsInstancedActorsIterationContext&)> InOperation) const;
 
 	/** 
@@ -91,10 +93,10 @@ public:
 	 *	spawned associated with it, then the actor itself will be tested against the bounds for more precise test.
 	 * @param AllowedLODs if provided will be used to filter out InstancedActorData that are at LOD not matching the flags in AllowedLODs
 	 */
-	ARSINSTANCEDACTORS_API bool HasInstancesOfClass(const FBox& QueryBounds, TSubclassOf<AActor> ActorClass, const bool bTestActorsIfSpawned = false
+	bool HasInstancesOfClass(const FBox& QueryBounds, TSubclassOf<AActor> ActorClass, const bool bTestActorsIfSpawned = false
 		, const EArsInstancedActorsBulkLODMask AllowedLODs = EArsInstancedActorsBulkLODMask::All) const;
 
-	ARSINSTANCEDACTORS_API FArsInstancedActorsManagerHandle AddManager(AArsInstancedActorsManager& Manager);
+	FArsInstancedActorsManagerHandle AddManager(AArsInstancedActorsManager& Manager);
 	void RemoveManager(FArsInstancedActorsManagerHandle ManagerHandle);
 
 	FArsInstancedActorsModifierVolumeHandle AddModifierVolume(UArsInstancedActorsModifierVolumeComponent& ModifierVolume);
@@ -119,7 +121,7 @@ public:
 	bool ExecutePendingDeferredSpawnEntitiesRequests(double StopAfterSeconds = INFINITY);
 
 	/** Return true if any deferred spawn entities requests are pending execution by the next ExecutePendingDeferredSpawnEntitiesRequests */
-	ARSINSTANCEDACTORS_API bool HasPendingDeferredSpawnEntitiesRequests() const;
+	bool HasPendingDeferredSpawnEntitiesRequests() const;
 
 	/**
 	 * Retrieves existing or spawns a new ActorClass for introspecting exemplary instance data.
@@ -129,12 +131,12 @@ public:
 	 *
 	 * These 'exemplar' actors are fully constructed, including BP construction scripts up to (but not including) BeginPlay.
 	 */
-	ARSINSTANCEDACTORS_API TSharedRef<UE::ArsInstancedActors::FExemplarActorData> GetOrCreateExemplarActor(TSubclassOf<AActor> ActorClass);
+	TSharedRef<UE::ArsInstancedActors::FExemplarActorData> GetOrCreateExemplarActor(TSubclassOf<AActor> ActorClass);
 	
 	/**
 	 * Removes exemplar actor class from the map
 	 */
-	ARSINSTANCEDACTORS_API void UnregisterExemplarActorClass(TSubclassOf<AActor> ActorClass);
+	void UnregisterExemplarActorClass(TSubclassOf<AActor> ActorClass);
 
 	/** 
 	 * Compiles and caches finalized settings for ActorClass based off FArsInstancedActorsClassSettingsBase found in 
@@ -171,23 +173,23 @@ public:
 	 * representation update by the calling code.
 	 * @see MarkInstanceRepresentationDirty, UArsInstancedActorsStationaryLODBatchProcessor
 	 */
-	ARSINSTANCEDACTORS_API void PopAllDirtyRepresentationInstances(TArray<FArsInstancedActorsInstanceHandle>& OutInstances);
+	void PopAllDirtyRepresentationInstances(TArray<FArsInstancedActorsInstanceHandle>& OutInstances);
 
-	ARSINSTANCEDACTORS_API virtual FArsInstancedActorsVisualizationDesc CreateVisualDescriptionFromActor(const AActor& ExemplarActor) const;
+	virtual FArsInstancedActorsVisualizationDesc CreateVisualDescriptionFromActor(const AActor& ExemplarActor) const;
 	/*
 	* Called when an additional/alternate VisualizationDesc is registered. Override to make custom modifications to the visual representation
 	*/
-	ARSINSTANCEDACTORS_API virtual void ModifyVisualDescriptionForActor(const TNotNull<AActor*> ExemplarActor, FArsInstancedActorsVisualizationDesc& InOutVisualization) const {}
+	virtual void ModifyVisualDescriptionForActor(const TNotNull<AActor*> ExemplarActor, FArsInstancedActorsVisualizationDesc& InOutVisualization) const {}
 
 	//~ Begin UTickableWorldSubsystem Overrides
-	ARSINSTANCEDACTORS_API virtual void Tick(float DeltaTime) override;
-	ARSINSTANCEDACTORS_API virtual TStatId GetStatId() const override;
+	virtual void Tick(float DeltaTime) override;
+	virtual TStatId GetStatId() const override;
 	//~ End UTickableWorldSubsystem Overrides
 
 	//~ Begin USubsystem Overrides
-	ARSINSTANCEDACTORS_API virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
-	ARSINSTANCEDACTORS_API virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	ARSINSTANCEDACTORS_API virtual void Deinitialize() override;
+	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
 	//~ End USubsystem Overrides
 
 	struct FNextTickSharedFragment

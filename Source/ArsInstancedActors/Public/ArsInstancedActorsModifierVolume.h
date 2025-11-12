@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "GameFramework/Actor.h"
 #include "UObject/UObjectGlobals.h"
 #include "ArsInstancedActorsModifierVolume.generated.h"
@@ -13,13 +15,13 @@ class UArsInstancedActorsModifierVolumeComponent;
  * @see UArsInstancedActorsModifierVolumeComponent
  */
 UCLASS(MinimalAPI)
-class AArsInstancedActorsModifierVolume : public AActor
+class ARSMECHANICA_API AArsInstancedActorsModifierVolume : public AActor
 {
 	GENERATED_BODY()
 
 public:
 
-	ARSINSTANCEDACTORS_API AArsInstancedActorsModifierVolume(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	AArsInstancedActorsModifierVolume(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	FORCEINLINE UArsInstancedActorsModifierVolumeComponent* GetModifierVolumeComponent() const
 	{
@@ -37,11 +39,11 @@ protected:
  * @see URemoveInstancesModifierVolumeComponent
  */
 UCLASS(MinimalAPI)
-class AArsInstancedActorsRemovalModifierVolume : public AArsInstancedActorsModifierVolume
+class ARSMECHANICA_API AArsInstancedActorsRemovalModifierVolume : public AArsInstancedActorsModifierVolume
 {
 	GENERATED_BODY()
 
 public:
 
-	ARSINSTANCEDACTORS_API	AArsInstancedActorsRemovalModifierVolume(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	AArsInstancedActorsRemovalModifierVolume(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 };

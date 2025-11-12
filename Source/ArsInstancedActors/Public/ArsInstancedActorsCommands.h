@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "ArsInstancedActorsManager.h"
 #include "MassCommands.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
@@ -13,7 +15,7 @@ namespace UE::ArsInstancedActors
 	 * (i.e. not the Batched-LOD ones). These tags are switched by UArsInstancedActorsStationaryLODBatchProcessor
 	 * Modifying the bitset is the way for project-specific code to influence what gets executed.
 	 */
-	ARSINSTANCEDACTORS_API FMassTagBitSet& GetDetailedLODTags();
+	FMassTagBitSet& GetDetailedLODTags();
 
 	/** Adds GetDetailedLODTags() to an entity, effectively enabling DetailedLOD processing on it */
 	struct FEnableDetailedLODCommand : public FMassCommandChangeTags
