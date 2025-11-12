@@ -2,10 +2,11 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "MassActorSpawnerSubsystem.h"
 #include "ClientArsInstancedActorsSpawnerSubsystem.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 
 /** 
@@ -14,19 +15,18 @@
  * over to the Client.
  */
 UCLASS(MinimalAPI)
-class UClientArsInstancedActorsSpawnerSubsystem : public UMassActorSpawnerSubsystem
+class ARSMECHANICA_API UClientArsInstancedActorsSpawnerSubsystem : public UMassActorSpawnerSubsystem
 {
 	GENERATED_BODY()
 
 protected:
 	//~ Begin USubsystem Overrides
-	UE_API virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
+	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 	//~ Begin USubsystem Overrides
 
 	//~ Begin UMassActorSpawnerSubsystem Overrides
-	UE_API virtual ESpawnRequestStatus SpawnActor(FConstStructView SpawnRequestView, TObjectPtr<AActor>& OutSpawnedActor, FActorSpawnParameters& InOutSpawnParameters) const override;
-	UE_API virtual bool ReleaseActorToPool(AActor* Actor) override;
+	virtual ESpawnRequestStatus SpawnActor(FConstStructView SpawnRequestView, TObjectPtr<AActor>& OutSpawnedActor, FActorSpawnParameters& InOutSpawnParameters) const override;
+	virtual bool ReleaseActorToPool(AActor* Actor) override;
 	//~ End UMassActorSpawnerSubsystem Overrides
 };
 
-#undef UE_API

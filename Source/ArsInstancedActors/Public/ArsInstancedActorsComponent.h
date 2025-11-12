@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "ArsInstancedActorsCommands.h"
 #include "ArsInstancedActorsDebug.h"
 #include "ArsInstancedActorsTypes.h"
@@ -13,7 +15,6 @@
 #include "Templates/SharedPointer.h"
 #include "ArsInstancedActorsComponent.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 
 class UArsInstancedActorsData;
@@ -25,27 +26,27 @@ struct FMassEntityTemplateData;
  * Provides Mass Entity reference and interop functions for Actors spawned via Instanced Actors on both client & server.
  */ 
 UCLASS(MinimalAPI, ClassGroup="Instanced Actors", Meta=(BlueprintSpawnableComponent))
-class UArsInstancedActorsComponent : public UActorComponent
+class ARSMECHANICA_API UArsInstancedActorsComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
 
-	UE_API UArsInstancedActorsComponent();
+	UArsInstancedActorsComponent();
 
 	/** 
 	 * Called on servers before InitializeComponent & BeginPlay in UServerArsInstancedActorsSpawnerSubsystem::SpawnActor for 
 	 * Actors spawned by the Instanced Actor system. 
      * Note: This is *not* called for BP constructed components which aren't added until after PreSpawnInit.
 	 */
-	UE_API virtual void OnServerPreSpawnInitForInstance(FArsInstancedActorsInstanceHandle InInstanceHandle);
+	virtual void OnServerPreSpawnInitForInstance(FArsInstancedActorsInstanceHandle InInstanceHandle);
 
 	/** 
 	 * Called on servers during InitializeComponent for Actors spawned by the Instanced Actor system. 
 	 * Note: This *is* called for both native *and* BP contructed components, as opposed to OnServerPreSpawnInitForInstance which is only
 	 * called for natively added components.
 	 */
-	UE_API virtual void InitializeComponentForInstance(FArsInstancedActorsInstanceHandle InInstanceHandle);
+	virtual void InitializeComponentForInstance(FArsInstancedActorsInstanceHandle InInstanceHandle);
 
 	/** 
 	 * Called on an 'exemplar' Actor's components for clients & servers during UArsInstancedActorsData::CreateEntityTemplate to provide 
@@ -116,12 +117,12 @@ public:
 	 * On servers, MassEntityHandle will be set in UArsInstancedActorsComponent::InitializeComponent (before component BeginPlay)
 	 * On clients, MassEntityHandle will be set after component BeginPlay.
 	 */
-	UE_API FMassEntityHandle GetMassEntityHandle() const;
+	FMassEntityHandle GetMassEntityHandle() const;
 
 	/** If HasMassEntity(), the Mass Entity Manager for MassEntityHandle */
-	UE_API TSharedPtr<FMassEntityManager> GetMassEntityManager() const;
+	TSharedPtr<FMassEntityManager> GetMassEntityManager() const;
 
-	UE_API FMassEntityManager& GetMassEntityManagerChecked() const;
+	FMassEntityManager& GetMassEntityManagerChecked() const;
 
 	/** 
 	 * If HasMassEntity(), adds a new default constructed FragmentType to this Instanced Actor's Mass entity, if not already 
@@ -177,15 +178,15 @@ protected:
 	FArsInstancedActorsInstanceHandle InstanceHandle;
 
 	UFUNCTION()
-	UE_API void OnRep_InstanceHandle();
+	void OnRep_InstanceHandle();
 
 	//~ Begin UObject Overrides
-	UE_API virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	//~ Begin UObject Overrides
 
 	//~ Begin AActorComponent Overrides
-	UE_API virtual void InitializeComponent() override;
-	UE_API virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void InitializeComponent() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//~ End AActorComponent Overrides
 };
 
@@ -242,4 +243,3 @@ void UArsInstancedActorsComponent::RemoveFragmentDeferred()
 	}
 }
 
-#undef UE_API

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "ArsInstancedActorsDebug.h"
 #include "MassEntityTypes.h"
 
@@ -15,7 +17,7 @@
 struct FMassEntityManager;
 
 /** Gameplay debugger used to debug Intanced Actors */
-class FGameplayDebuggerCategory_ArsInstancedActors : public FGameplayDebuggerCategory
+class ARSMECHANICA_API FGameplayDebuggerCategory_ArsInstancedActors : public FGameplayDebuggerCategory
 {
 public:
 	FGameplayDebuggerCategory_ArsInstancedActors();
@@ -27,7 +29,7 @@ public:
 
 	virtual void CollectData(APlayerController* OwnerPC, AActor* DebugActor) override;
 
-	ARSINSTANCEDACTORS_API static TSharedRef<FGameplayDebuggerCategory> MakeInstance();
+	static TSharedRef<FGameplayDebuggerCategory> MakeInstance();
 
 protected:
 

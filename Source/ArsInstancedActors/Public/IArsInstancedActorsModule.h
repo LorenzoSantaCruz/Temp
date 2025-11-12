@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "Modules/ModuleInterface.h"
 #include "Modules/ModuleManager.h"
 
@@ -10,7 +12,7 @@
  * The public interface to this module.  In most cases, this interface is only public to sibling modules 
  * within this plugin.
  */
-class IArsInstancedActorsModule : public IModuleInterface
+class ARSMECHANICA_API IArsInstancedActorsModule : public IModuleInterface
 {
 
 public:

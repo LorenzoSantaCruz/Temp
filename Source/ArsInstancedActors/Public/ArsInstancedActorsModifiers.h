@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "UObject/Object.h"
 #include "ArsInstancedActorsManager.h"
 #include "ArsInstancedActorsData.h"
@@ -9,7 +11,6 @@
 #include "ArsInstancedActorsSubsystem.h"
 #include "ArsInstancedActorsModifiers.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 
 struct FArsInstancedActorsInstanceHandle;
@@ -26,7 +27,7 @@ struct FArsInstancedActorsIterationContext;
  * @see UArsInstancedActorsModifierVolumeComponent
  */
 UCLASS(MinimalAPI, Abstract)
-class UArsInstancedActorsModifierBase : public UObject
+class ARSMECHANICA_API UArsInstancedActorsModifierBase : public UObject
 {
 	GENERATED_BODY()
 public:
@@ -53,7 +54,7 @@ public:
 	 * 
 	 * @see AArsInstancedActorsManager::ForEachInstance
 	 */
-	UE_API virtual void ModifyAllInstances(AArsInstancedActorsManager& Manager, FArsInstancedActorsIterationContext& IterationContext);
+	virtual void ModifyAllInstances(AArsInstancedActorsManager& Manager, FArsInstancedActorsIterationContext& IterationContext);
 
 	/** 
 	 * Per-instance callback to modify single instances.
@@ -67,7 +68,7 @@ public:
 	 * 
 	 * @return Return true to continue modification of subsequent instances, false to break iteration.
 	 */
-	UE_API virtual bool ModifyInstance(const FArsInstancedActorsInstanceHandle& InstanceHandle, const FTransform& InstanceTransform, FArsInstancedActorsIterationContext& IterationContext) PURE_VIRTUAL(UArsInstancedActorsModifierBase::ModifyInstance, return false;)
+	virtual bool ModifyInstance(const FArsInstancedActorsInstanceHandle& InstanceHandle, const FTransform& InstanceTransform, FArsInstancedActorsIterationContext& IterationContext) PURE_VIRTUAL(UArsInstancedActorsModifierBase::ModifyInstance, return false;)
 	
 	/** 
 	 * Callback to modify all instances in Manager, whose location falls within Bounds. 
@@ -141,7 +142,7 @@ protected:
  * For whole-manager modification this simply destroys the Manager.
  */
 UCLASS(MinimalAPI)
-class URemoveArsInstancedActorsModifier : public UArsInstancedActorsModifierBase
+class ARSMECHANICA_API URemoveArsInstancedActorsModifier : public UArsInstancedActorsModifierBase
 {
 	GENERATED_BODY()
 public:
@@ -151,4 +152,3 @@ public:
 	virtual bool ModifyInstance(const FArsInstancedActorsInstanceHandle& InstanceHandle, const FTransform& InstanceTransform, FArsInstancedActorsIterationContext& IterationContext) override;
 };
 
-#undef UE_API

@@ -2,12 +2,14 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "MassRepresentationSubsystem.h"
 #include "ArsInstancedActorsRepresentationSubsystem.generated.h"
 
 
 UCLASS()
-class UArsInstancedActorsRepresentationSubsystem : public UMassRepresentationSubsystem
+class ARSMECHANICA_API UArsInstancedActorsRepresentationSubsystem : public UMassRepresentationSubsystem
 {
 	GENERATED_BODY()
 

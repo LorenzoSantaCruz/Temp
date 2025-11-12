@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "ArsInstancedActorsIndex.h"
 #include "Containers/Array.h"
 #include "Containers/Map.h"
@@ -9,7 +11,6 @@
 #include "UObject/ObjectPtr.h"
 #include "ArsInstancedActorsIteration.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 
 class AArsInstancedActorsManager;
@@ -27,7 +28,7 @@ struct FArsInstancedActorsIterationContext
 	GENERATED_BODY()
 
 	// Destructor to ensure no pending actions remain
-	UE_API ~FArsInstancedActorsIterationContext();
+	~FArsInstancedActorsIterationContext();
 
 	/**
 	 * Safely marks InstanceHandle for destruction at the end of iteration, to ensure iteration
@@ -37,7 +38,7 @@ struct FArsInstancedActorsIterationContext
 	 * Note: This is safe to call before entity spawning as source instance data will simply be invalidated,
 	 *       preventing later entity spawning.
 	 */
-	UE_API void RemoveInstanceDeferred(const FArsInstancedActorsInstanceHandle& InstanceHandle);
+	void RemoveInstanceDeferred(const FArsInstancedActorsInstanceHandle& InstanceHandle);
 
 	/**
 	 * Safely marks all instances in InstanceData for destruction at the end of iteration, to ensure iteration
@@ -47,7 +48,7 @@ struct FArsInstancedActorsIterationContext
 	 * Note: This is safe to call before entity spawning as source instance data will simply be invalidated,
 	 *       preventing later entity spawning.
 	 */
-	UE_API void RemoveAllInstancesDeferred(UArsInstancedActorsData& InstanceData);
+	void RemoveAllInstancesDeferred(UArsInstancedActorsData& InstanceData);
 
 	/**
 	 * Safely marks all instances in Manager for destruction at the end of iteration, to ensure iteration
@@ -57,10 +58,10 @@ struct FArsInstancedActorsIterationContext
 	 * Note: This is safe to call before entity spawning as source instance data will simply be invalidated,
 	 *       preventing later entity spawning.
 	 */
-	UE_API void RemoveAllInstancesDeferred(AArsInstancedActorsManager& Manager);
+	void RemoveAllInstancesDeferred(AArsInstancedActorsManager& Manager);
 
 	/** Perform deferred instance removals **/
-	UE_API void FlushDeferredActions();
+	void FlushDeferredActions();
 
 private:
 
@@ -78,4 +79,3 @@ struct FScopedArsInstancedActorsIterationContext : public FArsInstancedActorsIte
 	}
 };
 
-#undef UE_API

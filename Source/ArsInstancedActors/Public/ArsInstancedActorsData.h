@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "ArsInstancedActorsTypes.h"
 #include "ArsInstancedActorsReplication.h"
 #include "MassEntityConfigAsset.h"
@@ -9,7 +11,6 @@
 
 #include "ArsInstancedActorsData.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 class AArsInstancedActorsManager;
 struct FArsInstancedActorsSettings;
@@ -43,7 +44,7 @@ private:
  * @see AArsInstancedActorsManager
  */
 UCLASS(MinimalAPI, DefaultToInstanced)
-class UArsInstancedActorsData : public UObject
+class ARSMECHANICA_API UArsInstancedActorsData : public UObject
 {
 	GENERATED_BODY()
 
@@ -51,32 +52,32 @@ public:
 	friend AArsInstancedActorsManager;
 
 	// Called early in AArsInstancedActorsManager::InitializeModifyAndSpawnEntities to intitalize Settings, default visualization & Mass entity template
-	UE_API void Initialize();
+	void Initialize();
 
 	// Called in AArsInstancedActorsManager::InitializeModifyAndSpawnEntities to spawn Mass entities for each instance
-	UE_API void SpawnEntities();
+	void SpawnEntities();
 
 	// Called early in AArsInstancedActorsManager::EndPlay to reconstruct cooked data state from runtime Mass entities as best we can,
 	// then despawn all Mass entities and reset any other runtime instance data
-	UE_API void DespawnEntities();
+	void DespawnEntities();
 
 	// Called from the parent's AArsInstancedActorsManager::EndPlay. Can release the entity template and exemplar Actor from memory 
-	UE_API void Deinitialize();
+	void Deinitialize();
 
 	UFUNCTION(BlueprintPure, Category = ArsInstancedActors)
-	UE_API AArsInstancedActorsManager* GetManager() const;
+	AArsInstancedActorsManager* GetManager() const;
 
-	UE_API AArsInstancedActorsManager& GetManagerChecked() const;
+	AArsInstancedActorsManager& GetManagerChecked() const;
 
 	// Returns the 'owning' UArsInstancedActorsData for EntityHandle by checking it's FArsInstancedActorsFragment (if any)
 	// returning nullptr for unknown entities.
-	static UE_API UArsInstancedActorsData* GetInstanceDataForEntity(const FMassEntityManager& EntityManager, const FMassEntityHandle EntityHandle);
+	static UArsInstancedActorsData* GetInstanceDataForEntity(const FMassEntityManager& EntityManager, const FMassEntityHandle EntityHandle);
 
-	UE_API FArsInstancedActorsInstanceIndex GetInstanceIndexForEntity(const FMassEntityHandle EntityHandle) const;
+	FArsInstancedActorsInstanceIndex GetInstanceIndexForEntity(const FMassEntityHandle EntityHandle) const;
 
-	UE_API FMassEntityHandle GetEntity(FArsInstancedActorsInstanceIndex InstanceIndex) const;
+	FMassEntityHandle GetEntity(FArsInstancedActorsInstanceIndex InstanceIndex) const;
 
-	UE_API void SetSharedInstancedActorDataStruct(FSharedStruct InSharedStruct);
+	void SetSharedInstancedActorDataStruct(FSharedStruct InSharedStruct);
 	
 	/** @return current Bulk LOD of this InstancedActorData instance */
 	EArsInstancedActorsBulkLOD GetBulkLOD() const
@@ -185,33 +186,33 @@ public:
 	float LowLODDrawDistance = FLT_MAX;
 
 	// Returns true if InstanceTransforms has been consumed to spawn Mass entities
-	UE_API bool HasSpawnedEntities() const;
+	bool HasSpawnedEntities() const;
 
 	bool CanHydrate() const;
 
 	// Returns the total instance count, including both valid & invalid instances e.g: GetNumFreeInstances() + NumValidInstances
 	// Useful for iterating by FArsInstancedActorsInstanceIndex or allocating same-sized instance data arrays
-	UE_API int32 GetNumInstances() const;
+	int32 GetNumInstances() const;
 
 	// Returns the current invalid instance count, if any (i.e: GetNumInstances() - NumValidInstances)
-	UE_API int32 GetNumFreeInstances() const;
+	int32 GetNumFreeInstances() const;
 
 	// Returns true if InstanceHandle refers to this instance data and we have current information for an
 	// instance at InstanceHandle.InstanceIndex
-	UE_API bool IsValidInstance(const FArsInstancedActorsInstanceHandle& InstanceHandle) const;
+	bool IsValidInstance(const FArsInstancedActorsInstanceHandle& InstanceHandle) const;
 	
 	// Performs setup after all Instances have been loaded. Canonically called from PostLoad(), but may need to be called manually
 	// if this UArsInstancedActorsData is created at cook/runtime
-	UE_API void SetupLoadedInstances();
+	void SetupLoadedInstances();
 
 #if WITH_EDITOR
 	// Add's an instance of this actor type at Transform
 	// @see AArsInstancedActorsManager::AddActorInstance
-	UE_API FArsInstancedActorsInstanceHandle AddInstance(const FTransform& Transform, const bool bWorldSpace = false);
+	FArsInstancedActorsInstanceHandle AddInstance(const FTransform& Transform, const bool bWorldSpace = false);
 
 	// Set/update the transform for an instance.
 	//
-	UE_API bool SetInstanceTransform(const FArsInstancedActorsInstanceHandle& InstanceHandle, const FTransform& Transform, const bool bWorldSpace);
+	bool SetInstanceTransform(const FArsInstancedActorsInstanceHandle& InstanceHandle, const FTransform& Transform, const bool bWorldSpace);
 
 	// Removes all instance data for InstanceHandle.
 	//
@@ -222,11 +223,11 @@ public:
 	// a fresh manager.
 	//
 	// @see IA.CompactInstances console command
-	UE_API bool RemoveInstance(const FArsInstancedActorsInstanceHandle& InstanceToRemove);
+	bool RemoveInstance(const FArsInstancedActorsInstanceHandle& InstanceToRemove);
 
 	// Iterates all ISMCs created in GetOrCreateActorInstanceData.
 	// @param InFunction						The function to call for each ISMC.
-	UE_API void ForEachEditorPreviewISMC(TFunctionRef<bool(UInstancedStaticMeshComponent& /*ISMComponent*/)> InFunction) const;
+	void ForEachEditorPreviewISMC(TFunctionRef<bool(UInstancedStaticMeshComponent& /*ISMComponent*/)> InFunction) const;
 #endif
 
 	// Removes RuntimeRemoveInstances as if they were never present i.e: these removals are not persisted as
@@ -235,7 +236,7 @@ public:
 	// destroys spawned entities.
 	//
 	// Note: Any RuntimeRemoveInstances that have already been removed are safely skipped.
-	UE_API void RuntimeRemoveInstances(TConstArrayView<FArsInstancedActorsInstanceIndex> RuntimeRemoveInstances);
+	void RuntimeRemoveInstances(TConstArrayView<FArsInstancedActorsInstanceIndex> RuntimeRemoveInstances);
 
 	// Removes all instances as if they were never present i.e: these removals are not persisted as
 	// if made by a player.
@@ -243,31 +244,31 @@ public:
 	// destroys spawned entities.
 	//
 	// Note: Any RuntimeRemoveInstances that have already been removed are safely skipped.
-	UE_API void RuntimeRemoveAllInstances();
+	void RuntimeRemoveAllInstances();
 
 	// Authority: Permanently destroy InstanceToDestroy by adding it to the persistent DestroyedInstances list
 	// and deleting it's Mass entity (deleting any Mass-spawned actors in turn).
 	// DestroyedInstances modifications are then replicated to clients.
 	// Non-authority: 'Predict' replicated destruction by removing the instance to prevent ISMC instance addition
 	// once actor destruction completes.
-	UE_API void DestroyInstance(FArsInstancedActorsInstanceIndex InstanceToDestroy);
+	void DestroyInstance(FArsInstancedActorsInstanceIndex InstanceToDestroy);
 
 	// Authority: `Eject` an instance by unlinking it's Actor from Mass, setting the actor to persist itself and
 	// then destroying the manager instance. This effectively transfers the actor to the persistence
 	// system.
 	// Non-authority: Perform the same unlinking and entity removal locally to release the Actor from Mass.
-	UE_API virtual void EjectInstanceActor(FArsInstancedActorsInstanceIndex InstanceToEject, AActor& ActorToEject);
+	virtual void EjectInstanceActor(FArsInstancedActorsInstanceIndex InstanceToEject, AActor& ActorToEject);
 
 	// Called in UArsInstancedActorsComponent::OnRep_InstanceHandle on clients to set ReplicatedActor as the current
 	// actor for Instance's mass entity. As we set bForceActorRepresentationWhileAvailable in UArsInstancedActorsVisualizationTrait
 	// this then forces the entity to switch to Actor representation on clients.
-	UE_API void SetReplicatedActor(FArsInstancedActorsInstanceIndex Instance, AActor& ReplicatedActor);
+	void SetReplicatedActor(FArsInstancedActorsInstanceIndex Instance, AActor& ReplicatedActor);
 
 	// Called in UArsInstancedActorsComponent::EndPlay on clients to clear / unset the current
 	// actor for Instance's mass entity.
 	// As we set bForceActorRepresentationWhileAvailable in UArsInstancedActorsVisualizationTrait
 	// this then allows the natural WantedRepresentationType (ISMC) to restore
-	UE_API void ClearReplicatedActor(FArsInstancedActorsInstanceIndex Instance, AActor& ExpectedActor);
+	void ClearReplicatedActor(FArsInstancedActorsInstanceIndex Instance, AActor& ExpectedActor);
 
 	// Returns the default visualization auto-created in BeginPlay from ActorClass and used
 	// by default for all spawned entities in BeginPlay.
@@ -308,13 +309,13 @@ public:
 	// for each VisualizationDesc.InstancedMeshes
 	// @warning No more than 254 visualizations may be registered at any time to allow for uint8 indexing.
 	// @return Index handle to refer to the registered visualization
-	UE_API uint8 AddVisualization(FArsInstancedActorsVisualizationDesc& InOutVisualizationDesc);
+	uint8 AddVisualization(FArsInstancedActorsVisualizationDesc& InOutVisualizationDesc);
 
 	// Register additional / alternate VisualizationDesc for instances to switch to, creating ISMC's
 	// for each VisualizationDesc.InstancedMeshes
 	// @warning No more than 254 visualizations may be registered at any time to allow for uint8 indexing.
 	// @return Index handle to refer to the registered visualization
-	UE_API uint8 AddVisualizationAsync(const FArsInstancedActorsSoftVisualizationDesc& SoftVisualizationDesc);
+	uint8 AddVisualizationAsync(const FArsInstancedActorsSoftVisualizationDesc& SoftVisualizationDesc);
 
 	// Iterates all currently 'allocated' visualizations previously added with AddVisualization or AddVisualizationAsync
 	// @param InFunction						The function to call for each allocated visualization.
@@ -322,7 +323,7 @@ public:
 	//											(FArsInstancedActorsVisualizationInfo::IsAsyncLoading() = true) which won't have been
 	//											initialized yet i.e: won't yet have a valid Desc, ISMComponents or MassStaticMeshDescIndex
 	//											yet.
-	UE_API void ForEachVisualization(TFunctionRef<bool(uint8 /*VisualizationIndex*/, const FArsInstancedActorsVisualizationInfo&  /*Visualization*/)> InFunction
+	void ForEachVisualization(TFunctionRef<bool(uint8 /*VisualizationIndex*/, const FArsInstancedActorsVisualizationInfo&  /*Visualization*/)> InFunction
 		, bool bSkipAsyncLoadingVisualizations = true) const;
 
 	// Switches InstanceToSwitch to use the 'visualization' at NewVisualizationIndex, previoulsy added via
@@ -333,67 +334,67 @@ public:
 	// to the instances entity. UArsInstancedActorsVisualizationSwitcherProcessor will then process this switch
 	// fragment to remove the current visualization's ISMC instances if any and setup NewVisualizationIndex
 	// to be instanced instead.
-	UE_API void SwitchInstanceVisualization(FArsInstancedActorsInstanceIndex InstanceToSwitch, uint8 NewVisualizationIndex);
+	void SwitchInstanceVisualization(FArsInstancedActorsInstanceIndex InstanceToSwitch, uint8 NewVisualizationIndex);
 
 	// Remove previously registered instance visualization, deleting all ISMC's
-	UE_API void RemoveVisualization(uint8 VisualizationIndex);
+	void RemoveVisualization(uint8 VisualizationIndex);
 
 	// Remove all previously registered instance visualization, deleting all ISMC's
-	UE_API void RemoveAllVisualizations();
+	void RemoveAllVisualizations();
 
 	// Called by UArsInstancedActorsRepresentationActorManagement when a managed actor is destroyed
-	UE_API void OnInstancedActorDestroyed(AActor& DestroyedActor, const FMassEntityHandle EntityHandle);
+	void OnInstancedActorDestroyed(AActor& DestroyedActor, const FMassEntityHandle EntityHandle);
 
 	// Called by UArsInstancedActorsRepresentationActorManagement when a managed actor is moved
 	// @return true if MovedActor was ejected
-	UE_API bool OnInstancedActorMoved(AActor& MovedActor, const FMassEntityHandle EntityHandle);
+	bool OnInstancedActorMoved(AActor& MovedActor, const FMassEntityHandle EntityHandle);
 
 	// Called when persistent data has been applied / restored
-	UE_API void OnPersistentDataRestored();
+	void OnPersistentDataRestored();
 
 	FORCEINLINE FArsInstancedActorsDeltaList& GetMutableInstanceDeltaList() { return InstanceDeltas; }
 
 	FORCEINLINE const FArsInstancedActorsDeltaList& GetInstanceDeltaList() const { return InstanceDeltas; }
 
 	// Called by FArsInstancedActorsDeltaList::PostReplicatedAdd and PostReplicatedChanged on InstanceDelta replication
-	UE_API void OnRep_InstanceDeltas(TConstArrayView<int32> UpdatedInstanceDeltaIndices);
+	void OnRep_InstanceDeltas(TConstArrayView<int32> UpdatedInstanceDeltaIndices);
 
 	// Called by FArsInstancedActorsDeltaList::PreReplicatedRemove on InstanceDelta removal replication (just before the actual array element removal)
-	UE_API void OnRep_PreRemoveInstanceDeltas(TConstArrayView<int32> RemovedInstanceDeltaIndices);
+	void OnRep_PreRemoveInstanceDeltas(TConstArrayView<int32> RemovedInstanceDeltaIndices);
 
 	// Called on both server and client to apply instance delta changes to mass entities
 	// On servers: Called by OnPersistentDataRestored after persistence record has deserialized the delta data
 	// On clients: Called by OnRep_InstanceDeltas when new delta data has replicated from the server
 	// @param InstanceDeltaIndices Indices into InsanceDeltas.GetInstanceDeltas() of the upated deltas to apply
-	UE_API void ApplyInstanceDeltas();
-	UE_API void ApplyInstanceDeltas(TConstArrayView<int32> InstanceDeltaIndices);
+	void ApplyInstanceDeltas();
+	void ApplyInstanceDeltas(TConstArrayView<int32> InstanceDeltaIndices);
 
 	// Called on clients by OnRep_PreRemoveInstanceDeltas to revert instance delta change to mass entities
 	// @param InstanceDeltaIndices Indices into InsanceDeltas.GetInstanceDeltas() of the deltas to revert
-	UE_API void RollbackInstanceDeltas(TConstArrayView<int32> InstanceDeltaIndices);
+	void RollbackInstanceDeltas(TConstArrayView<int32> InstanceDeltaIndices);
 
 	// Returns a string useful for identifying this instance data object withing it's owning manager
 	// @param bCompact if true, this IAD's pointer is used, otherwise the full manager object path is included
-	UE_API FString GetDebugName(bool bCompact = false) const;
+	FString GetDebugName(bool bCompact = false) const;
 
-	UE_API virtual void UpdateCullDistance();
+	virtual void UpdateCullDistance();
 
 	// mz@todo IA: move this section back
 	// Server-only. Used by LifecycleComponent & LifecycleProcessor to replicate & persist lifecycle changes
 	// @todo Provide generic fragment persistence & replication
-	UE_API void SetInstanceCurrentLifecyclePhase(FArsInstancedActorsInstanceIndex InstanceIndex, uint8 InCurrentLifecyclePhaseIndex);
+	void SetInstanceCurrentLifecyclePhase(FArsInstancedActorsInstanceIndex InstanceIndex, uint8 InCurrentLifecyclePhaseIndex);
 
 	// mz@todo IA: move this section back
 	// Server-only. Used by LifecycleComponent & LifecycleProcessor to remove replicated & persisted lifecycle
 	// changes (triggering a rollback to default values on clients)
 	// @todo Provide generic fragment persistence & replication
-	UE_API void RemoveInstanceLifecyclePhaseDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
+	void RemoveInstanceLifecyclePhaseDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
 
 	// mz@todo IA: move this section back
 	// Server-only. Used by LifecycleComponent & LifecycleProcessor to remove the lifecycle time elapsed
 	// delta record for InstanceIndex from InstanceDeltas (if any)
 	// @todo Provide generic fragment persistence & replication
-	UE_API void RemoveInstanceLifecyclePhaseTimeElapsedDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
+	void RemoveInstanceLifecyclePhaseTimeElapsedDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
 
 	int32 GetInstanceDataID() const { return (int32)ID; }
 
@@ -404,9 +405,9 @@ public:
 		return Entities.IsValidIndex(Index.GetIndex()) ? Entities[Index.GetIndex()] : FMassEntityHandle();
 	}
 
-	UE_API FMassEntityManager& GetMassEntityManagerChecked() const;
+	FMassEntityManager& GetMassEntityManagerChecked() const;
 
-	UE_API int32 GetEntityIndexFromCollisionIndex(const UInstancedStaticMeshComponent& ISMComponent, const int32 CollisionIndex) const;
+	int32 GetEntityIndexFromCollisionIndex(const UInstancedStaticMeshComponent& ISMComponent, const int32 CollisionIndex) const;
 
 	const FGameplayTagContainer& GetCombinedTags() const { return CombinedTags; }
 	
@@ -417,29 +418,29 @@ protected:
 	}
 
 	//~ Begin UObject Overrides
-	UE_API virtual void PostDuplicate(EDuplicateMode::Type DuplicateMode) override;
-	UE_API virtual void PostLoad() override;
-	UE_API virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PostDuplicate(EDuplicateMode::Type DuplicateMode) override;
+	virtual void PostLoad() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 #if UE_WITH_IRIS
-	UE_API virtual void RegisterReplicationFragments(UE::Net::FFragmentRegistrationContext& Context, UE::Net::EFragmentRegistrationFlags RegistrationFlags) override;
+	virtual void RegisterReplicationFragments(UE::Net::FFragmentRegistrationContext& Context, UE::Net::EFragmentRegistrationFlags RegistrationFlags) override;
 #endif
 	virtual bool IsNameStableForNetworking() const override { return true; }
 	//~ End UObject Overrides
 
 	// Called on BeginPlay to create default entity template
-	UE_API void CreateEntityTemplate(const AActor& ExemplarActor);
-	UE_API virtual void ModifyEntityTemplate(FMassEntityTemplateData& ModifiedTemplate, const AActor& ExemplarActor);
+	void CreateEntityTemplate(const AActor& ExemplarActor);
+	virtual void ModifyEntityTemplate(FMassEntityTemplateData& ModifiedTemplate, const AActor& ExemplarActor);
 
 	// Called from Deinitialize to destroy the owned FMassEntityTemplate  
-	UE_API void ReleaseEntityTemplate();
+	void ReleaseEntityTemplate();
 
 	// Helper function used in ApplyInstanceDeltas to apply a single delta
 	// @see ApplyInstanceDeltas
-	UE_API virtual void ApplyInstanceDelta(FMassEntityManager& EntityManager, const FArsInstancedActorsDelta& InstanceDelta, TArray<FArsInstancedActorsInstanceIndex>& OutEntitiesToRemove);
+	virtual void ApplyInstanceDelta(FMassEntityManager& EntityManager, const FArsInstancedActorsDelta& InstanceDelta, TArray<FArsInstancedActorsInstanceIndex>& OutEntitiesToRemove);
 
 	// Helper function used in RollbackInstanceDeltas to rollback a single delta
 	// @see RollbackInstanceDeltas
-	UE_API virtual void RollbackInstanceDelta(FMassEntityManager& EntityManager, const FArsInstancedActorsDelta& InstanceDelta);
+	virtual void RollbackInstanceDelta(FMassEntityManager& EntityManager, const FArsInstancedActorsDelta& InstanceDelta);
 
 	// Unlink InstanceToUnlink's Actor (if any) from Mass by clearing the entities reference to it
 	// and disconnecting from any subscribed actor signals, essentially 'forgetting' about the actor.
@@ -449,7 +450,7 @@ protected:
 	// would have otherwise force-destroyed the associated actor)
 	//
 	// @return The unlinked actor (if one was currently linked, nullptr otherwise)
-	UE_API AActor* UnlinkActor(FArsInstancedActorsInstanceIndex InstanceToUnlink);
+	AActor* UnlinkActor(FArsInstancedActorsInstanceIndex InstanceToUnlink);
 
 	// True if SetupLoadedInstances has ever been called
 	bool bHasSetupLoadedInstances : 1 = false;
@@ -479,12 +480,12 @@ protected:
 	// Adds or reuses a previously removed entry in InstanceVisualizations
 	// @return The 'visualization index` of the new or reused entry in InstanceVisualizations
 	// @see AddVisualization, AddVisualizationAsync
-	UE_API uint8 AllocateVisualization();
+	uint8 AllocateVisualization();
 
 	// Creates ISMCs for VisualizationDesc.InstancedMeshes, registers them with Mass and sets
 	// FArsInstancedActorsVisualizationInfo::MassStaticMeshDescIndex with the newly registed ISMC decription index
 	// @see AddVisualization, AddVisualizationAsync
-	UE_API void InitializeVisualization(uint8 AllocatedVisualizationIndex, const FArsInstancedActorsVisualizationDesc& VisualizationDesc);
+	void InitializeVisualization(uint8 AllocatedVisualizationIndex, const FArsInstancedActorsVisualizationDesc& VisualizationDesc);
 
 #if WITH_EDITORONLY_DATA
 	// ISMCs created in GetOrCreateActorInstanceData to match default visualizations ISMComponents for editor only preview of instances
@@ -537,4 +538,3 @@ inline bool UArsInstancedActorsData::CanHydrate() const
 	return bCanHydrate;
 }
 
-#undef UE_API

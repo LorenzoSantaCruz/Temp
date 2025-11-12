@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "MassProcessor.h"
 #include "ArsInstancedActorsInitializerProcessor.generated.h"
 
@@ -18,7 +20,7 @@ struct FArsInstancedActorsMassSpawnData
 
 /** Initializes the fragments of all entities that fit the query specified in ConfigureQueries, which are all considered Instanced Actors. */
 UCLASS()
-class UArsInstancedActorsInitializerProcessor : public UMassProcessor
+class ARSMECHANICA_API UArsInstancedActorsInitializerProcessor : public UMassProcessor
 {
 	GENERATED_BODY()
 

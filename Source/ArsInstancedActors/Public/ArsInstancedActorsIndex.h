@@ -2,11 +2,12 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "UObject/ObjectMacros.h"
 #include "Serialization/StructuredArchive.h"
 #include "ArsInstancedActorsIndex.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 
 class UArsInstancedActorsData;
@@ -44,7 +45,7 @@ struct FArsInstancedActorsInstanceIndex
 	bool IsValid() const { return Index != INDEX_NONE; }
 
 	/** Returns a string suitable for debug logging to identify this instance. */
-	UE_API FString GetDebugName() const;
+	FString GetDebugName() const;
 
 	bool operator==(const FArsInstancedActorsInstanceIndex&) const = default;
 
@@ -94,18 +95,18 @@ struct FArsInstancedActorsInstanceHandle
 	GENERATED_BODY()
 
 	FArsInstancedActorsInstanceHandle() = default;
-	UE_API FArsInstancedActorsInstanceHandle(UArsInstancedActorsData& InInstancedActorData, FArsInstancedActorsInstanceIndex InIndex);
+	FArsInstancedActorsInstanceHandle(UArsInstancedActorsData& InInstancedActorData, FArsInstancedActorsInstanceIndex InIndex);
 
 	UArsInstancedActorsData* GetInstanceActorData() const { return InstancedActorData.Get(); }
-	UE_API UArsInstancedActorsData& GetInstanceActorDataChecked() const;
+	UArsInstancedActorsData& GetInstanceActorDataChecked() const;
 
-	UE_API AArsInstancedActorsManager* GetManager() const;
-	UE_API AArsInstancedActorsManager& GetManagerChecked() const;
+	AArsInstancedActorsManager* GetManager() const;
+	AArsInstancedActorsManager& GetManagerChecked() const;
 
-	UE_API bool IsValid() const;
+	bool IsValid() const;
 
 	/** Returns a string suitable for debug logging to identify this instance. */
-	UE_API FString GetDebugName() const;
+	FString GetDebugName() const;
 
 	bool operator==(const FArsInstancedActorsInstanceHandle&) const = default;
 	FArsInstancedActorsInstanceIndex GetInstanceIndex() const { return Index; }
@@ -119,7 +120,7 @@ struct FArsInstancedActorsInstanceHandle
 
 private:
 
-	friend ARSINSTANCEDACTORS_API uint32 GetTypeHash(const FArsInstancedActorsInstanceHandle& InstanceHandle);
+	friend uint32 GetTypeHash(const FArsInstancedActorsInstanceHandle& InstanceHandle);
 	friend UArsInstancedActorsData;
 	friend AArsInstancedActorsManager;
 	friend FArsInstancedActorsIterationContext;
@@ -133,4 +134,3 @@ private:
 	FArsInstancedActorsInstanceIndex Index;
 };
 
-#undef UE_API

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "ArsInstancedActorsDebug.h"
 #if WITH_ARSINSTANCEDACTORS_DEBUG
 #include "MassEntityQuery.h"
@@ -11,7 +13,7 @@
 
 
 UCLASS()
-class UArsInstancedActorsDebugProcessor : public UMassProcessor
+class ARSMECHANICA_API UArsInstancedActorsDebugProcessor : public UMassProcessor
 {
 	GENERATED_BODY()
 

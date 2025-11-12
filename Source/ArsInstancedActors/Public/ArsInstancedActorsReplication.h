@@ -2,11 +2,12 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "ArsInstancedActorsIndex.h"
 #include "Net/Serialization/FastArraySerializer.h"
 #include "ArsInstancedActorsReplication.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 
 struct FArsInstancedActorsDeltaList;
@@ -85,36 +86,36 @@ struct FArsInstancedActorsDeltaList : public FFastArraySerializer
 {
 	GENERATED_BODY()
 
-	UE_API void Initialize(UArsInstancedActorsData& InOwnerInstancedActorData);
+	void Initialize(UArsInstancedActorsData& InOwnerInstancedActorData);
 
 	const TArray<FArsInstancedActorsDelta>& GetInstanceDeltas() const { return InstanceDeltas; }
 
 	// Clear the InstanceDeltas list and resets InstancedActorData 
 	// @param bMarkDirty If true, marks InstanceDeltas dirty for fast array replication
-	UE_API void Reset(bool bMarkDirty = true);
+	void Reset(bool bMarkDirty = true);
 
 	// Adds or modifies a FArsInstancedActorsDelta for InstanceIndex, marking the instance as destroyed and marks the 
 	// delta as dirty for replication and application on clients.
 	// This delta will also be persisted @see AArsInstancedActorsManager::SerializeInstancePersistenceData
 	// Note: This does not request a persistence re-save
-	UE_API void SetInstanceDestroyed(FArsInstancedActorsInstanceIndex InstanceIndex);
+	void SetInstanceDestroyed(FArsInstancedActorsInstanceIndex InstanceIndex);
 
-	UE_API void RemoveDestroyedInstanceDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
+	void RemoveDestroyedInstanceDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
 
 	// Adds or modifies a FArsInstancedActorsDelta for InstanceIndex, specifying a new lifecycle phase to switch the instance
 	// to, and marks the delta as dirty for replication and application on clients
 	// Note: This does not request a persistence re-save
-	UE_API void SetCurrentLifecyclePhaseIndex(FArsInstancedActorsInstanceIndex InstanceIndex, uint8 InCurrentLifecyclePhaseIndex);
+	void SetCurrentLifecyclePhaseIndex(FArsInstancedActorsInstanceIndex InstanceIndex, uint8 InCurrentLifecyclePhaseIndex);
 
-	UE_API void RemoveLifecyclePhaseDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
+	void RemoveLifecyclePhaseDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
 
 #if WITH_SERVER_CODE
 	// Adds or modifies a FArsInstancedActorsDelta for InstanceIndex, specifying a new elapse time for the current lifecycle phase.
 	// Note: This is a server-only delta and is NOT replicated to clients. It's simply stored in the delta list alongside the lifecycle 
 	//		 phase index so they can be restored together from persistence and applied on the server in OnPersistentDataRestored -> ApplyInstanceDeltas
-	UE_API void SetCurrentLifecyclePhaseTimeElapsed(FArsInstancedActorsInstanceIndex InstanceIndex, FFloat16 InCurrentLifecyclePhaseTimeElapsed);
+	void SetCurrentLifecyclePhaseTimeElapsed(FArsInstancedActorsInstanceIndex InstanceIndex, FFloat16 InCurrentLifecyclePhaseTimeElapsed);
 
-	UE_API void RemoveLifecyclePhaseTimeElapsedDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
+	void RemoveLifecyclePhaseTimeElapsedDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
 #endif // WITH_SERVER_CODE
 
 	const uint16 GetNumDestroyedInstanceDeltas() const { return NumDestroyedInstanceDeltas; }
@@ -122,17 +123,17 @@ struct FArsInstancedActorsDeltaList : public FFastArraySerializer
 	const uint16 GetNumLifecyclePhaseTimeElapsedDeltas() const { return NumLifecyclePhaseTimeElapsedDeltas; }
 
 	// UStruct overrides
-	UE_API bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams);
+	bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParams);
 
 	// FFastArraySerializer overrides
-	UE_API void PostReplicatedAdd(const TArrayView<int32>& AddedIndices, int32 FinalSize);
-	UE_API void PostReplicatedChange(const TArrayView<int32>& ChangedIndices, int32 FinalSize);
-	UE_API void PreReplicatedRemove(const TArrayView<int32>& RemovedIndices, int32 FinalSize);
+	void PostReplicatedAdd(const TArrayView<int32>& AddedIndices, int32 FinalSize);
+	void PostReplicatedChange(const TArrayView<int32>& ChangedIndices, int32 FinalSize);
+	void PreReplicatedRemove(const TArrayView<int32>& RemovedIndices, int32 FinalSize);
 
 private:
 
-	UE_API FArsInstancedActorsDelta& FindOrAddInstanceDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
-	UE_API void RemoveInstanceDelta(uint16 DeltaIndex);
+	FArsInstancedActorsDelta& FindOrAddInstanceDelta(FArsInstancedActorsInstanceIndex InstanceIndex);
+	void RemoveInstanceDelta(uint16 DeltaIndex);
 
 	// Lookup the InstanceDeltas index from a FArsInstancedActorsInstanceIndex. 
 	// Note: This is server only data, initialized in Initialize
@@ -159,4 +160,3 @@ struct TStructOpsTypeTraits< FArsInstancedActorsDeltaList > : public TStructOpsT
 	};
 };
 
-#undef UE_API

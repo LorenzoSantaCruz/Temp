@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "Containers/ArrayView.h"
 #include "ArsInstancedActorsTypes.h"
 #include "ArsInstancedActorsIndex.h"
@@ -15,7 +17,6 @@
 
 #include "ArsInstancedActorsManager.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 
 class UArsInstancedActorsModifierVolumeComponent;
@@ -44,7 +45,7 @@ namespace UE::ArsInstancedActors
 
 	namespace CVars
 	{
-		extern ARSINSTANCEDACTORS_API bool bEnablePersistence;
+		extern bool bEnablePersistence;
 	}
 
 	template <typename TBoundsType>
@@ -67,12 +68,12 @@ DECLARE_STATS_GROUP(TEXT("InstanceActor Rendering"), STATGROUP_ArsInstancedActor
  * both load the same stable instance data and can commonly refer to instances by index as such.
  */
 UCLASS(MinimalAPI, Config = Mass)
-class AArsInstancedActorsManager : public APartitionActor, public ISMInstanceManager, public IActorInstanceManagerInterface
+class ARSMECHANICA_API AArsInstancedActorsManager : public APartitionActor, public ISMInstanceManager, public IActorInstanceManagerInterface
 {
 	GENERATED_BODY()
 
 public:
-	UE_API AArsInstancedActorsManager();
+	AArsInstancedActorsManager();
 
 	/** 
 	 * Adds modifiers already registered with InInstancedActorSubsystem and either calls InitializeModifyAndSpawnEntities to spawn
@@ -80,7 +81,7 @@ public:
 	 * Called either in BeginPlay if InInstancedActorSubsystem was already initialized or latently once it is, in
 	 * UArsInstancedActorsSubsystem::Initialize
 	 */
-	UE_API void OnAddedToSubsystem(UArsInstancedActorsSubsystem& InInstancedActorSubsystem, FArsInstancedActorsManagerHandle InManagerHandle);
+	void OnAddedToSubsystem(UArsInstancedActorsSubsystem& InInstancedActorSubsystem, FArsInstancedActorsManagerHandle InManagerHandle);
 
 	FArsInstancedActorsManagerHandle GetManagerHandle() const;
 
@@ -88,7 +89,7 @@ public:
 	 * Performs setup after all Instances have been loaded. Canonically called from PostLoad(), but may need to be called manually
 	 * if this AArsInstancedActorsManager is created at cook/runtime
 	 */
-	UE_API void SetupLoadedInstances();
+	void SetupLoadedInstances();
 
 	/** 
 	 * Initializes all PerActorClassInstanceData, applies pre-spawn modifiers, spawns entities then applies post-spawn modifiers.
@@ -96,14 +97,14 @@ public:
 	 * Called either directly in OnAddedToSubsystem or deferred and time-sliced in UArsInstancedActorsSubsystem::Tick if
 	 * IA.DeferSpawnEntities is enabled.
 	 */
-	UE_API void InitializeModifyAndSpawnEntities();
+	void InitializeModifyAndSpawnEntities();
 
 	/** @return true if InstanceTransforms have been consumed to spawn Mass entities in InitializeModifyAndSpawnEntities */
 	bool HasSpawnedEntities() const;
 
 #if WITH_EDITOR
 	/** Adds an instance of ActorClass at InstanceTransform location to instance data */
-	UE_API FArsInstancedActorsInstanceHandle AddActorInstance(TSubclassOf<AActor> ActorClass, FTransform InstanceTransform, bool bWorldSpace = true, const FArsInstancedActorsTagSet& AdditionalInstanceTags = FArsInstancedActorsTagSet());
+	FArsInstancedActorsInstanceHandle AddActorInstance(TSubclassOf<AActor> ActorClass, FTransform InstanceTransform, bool bWorldSpace = true, const FArsInstancedActorsTagSet& AdditionalInstanceTags = FArsInstancedActorsTagSet());
 
 	/**
 	 * Removes all instance data for InstanceHandle.
@@ -116,11 +117,11 @@ public:
 	 *
 	 * @see IA.CompactInstances console command
 	 */
-	UE_API bool RemoveActorInstance(const FArsInstancedActorsInstanceHandle& InstanceToRemove);
+	bool RemoveActorInstance(const FArsInstancedActorsInstanceHandle& InstanceToRemove);
 #endif
 
 	/** Searches PerActorClassInstanceData, returning the IAD with matching UArsInstancedActorsData::ID, if any(nullptr otherwise) */
-	UE_API UArsInstancedActorsData* FindInstanceDataByID(uint16 InstanceDataID) const;
+	UArsInstancedActorsData* FindInstanceDataByID(uint16 InstanceDataID) const;
 
 	/** @return the full set of instance data for this manager */
 	TConstArrayView<TObjectPtr<UArsInstancedActorsData>> GetAllInstanceData() const;
@@ -133,18 +134,18 @@ public:
 	 *
 	 * Note: Any RuntimeRemoveInstances that have already been removed are safely skipped.
 	 */
-	UE_API void RuntimeRemoveAllInstances();
+	void RuntimeRemoveAllInstances();
 
 	/** @return the current valid instance count (i.e: NumInstances - FreeList.Num()) sum for all instance datas */
-	UE_API int32 GetNumValidInstances() const;
+	int32 GetNumValidInstances() const;
 
-	UE_API bool HasAnyValidInstances() const;
+	bool HasAnyValidInstances() const;
 
 	/**
 	 * @return true if InstanceHandle refers to this manager and we have current information for an
 	 *	instance at InstanceHandle.InstanceIndex in InstanceHandle.InstancedActorData  
 	 */
-	UE_API bool IsValidInstance(const FArsInstancedActorsInstanceHandle& InstanceHandle) const;
+	bool IsValidInstance(const FArsInstancedActorsInstanceHandle& InstanceHandle) const;
 
 	/** @return world space cumulative instance bounds. Only valid after BeginPlay. */
 	FBox GetInstanceBounds() const;
@@ -169,8 +170,8 @@ public:
 	 * @param Operation Function to call for each instance found within QueryBounds
 	 * @return false if InOperation ever returned false to break iteration, true otherwise.
 	 */
-	UE_API bool ForEachInstance(FInstanceOperationFunc Operation) const;
-	UE_API bool ForEachInstance(FInstanceOperationFunc Operation, FArsInstancedActorsIterationContext& IterationContext, TOptional<FInstancedActorDataPredicateFunc> InstancedActorDataPredicate = TOptional<FInstancedActorDataPredicateFunc>()) const;
+	bool ForEachInstance(FInstanceOperationFunc Operation) const;
+	bool ForEachInstance(FInstanceOperationFunc Operation, FArsInstancedActorsIterationContext& IterationContext, TOptional<FInstancedActorDataPredicateFunc> InstancedActorDataPredicate = TOptional<FInstancedActorDataPredicateFunc>()) const;
 
 	/**
 	 * Call InOperation for each valid instance in this manager whose location falls within QueryBounds. Prior to entity spawning in BeginPlay, this iterates valid
@@ -192,7 +193,7 @@ public:
 	 * @param bTestActorsIfSpawned if true then when an instance is found to overlap given bounds, and it has an actor 
 	 *	spawned associated with it, then the actor itself will be tested against the bounds for more precise test.
 	 */
-	UE_API bool HasInstancesOfClass(const FBox& QueryBounds, TSubclassOf<AActor> ActorClass, const bool bTestActorsIfSpawned = false
+	bool HasInstancesOfClass(const FBox& QueryBounds, TSubclassOf<AActor> ActorClass, const bool bTestActorsIfSpawned = false
 		, const EArsInstancedActorsBulkLODMask AllowedLODs = EArsInstancedActorsBulkLODMask::All) const;
 
 	/** 
@@ -204,20 +205,20 @@ public:
 		, const FArsInstancedActorsInstanceHandle& InstanceHandle, const FTransform & InstanceTransform);
 
 	/** Outputs instance metrics to Ar */
-	UE_API void AuditInstances(FOutputDevice& Ar, bool bDebugDraw = false, float DebugDrawDuration = 10.0f) const;
+	void AuditInstances(FOutputDevice& Ar, bool bDebugDraw = false, float DebugDrawDuration = 10.0f) const;
 
 	/** Called by IA.CompactInstances console command to fully remove FreeList instances */
-	UE_API void CompactInstances(FOutputDevice& Ar);
+	void CompactInstances(FOutputDevice& Ar);
 
-	UE_API void AddModifierVolume(UArsInstancedActorsModifierVolumeComponent& ModifierVolume);
-	UE_API void RemoveModifierVolume(UArsInstancedActorsModifierVolumeComponent& ModifierVolume);
-	UE_API void RemoveAllModifierVolumes();
+	void AddModifierVolume(UArsInstancedActorsModifierVolumeComponent& ModifierVolume);
+	void RemoveModifierVolume(UArsInstancedActorsModifierVolumeComponent& ModifierVolume);
+	void RemoveAllModifierVolumes();
 
 	/** Request the persistent data system to re-save this managers persistent data */
-	UE_API void RequestPersistentDataSave();
+	void RequestPersistentDataSave();
 
 	/** Helper function to deduce appropriate instanced static mesh bounds for ActorClass */
-	static UE_API FBox CalculateBounds(TSubclassOf<AActor> ActorClass);
+	static FBox CalculateBounds(TSubclassOf<AActor> ActorClass);
 
 	/** @return the Mass entity manager used to spawn entities. Valid only after BeginPlay */
 	TSharedPtr<FMassEntityManager> GetMassEntityManager() const;
@@ -229,30 +230,30 @@ public:
 
 	//~ Begin APartitionActor Overrides
 #if WITH_EDITOR
-	UE_API virtual uint32 GetDefaultGridSize(UWorld* InWorld) const override;
-	UE_API virtual FGuid GetGridGuid() const override;
-	UE_API void SetGridGuid(const FGuid& InGuid);
+	virtual uint32 GetDefaultGridSize(UWorld* InWorld) const override;
+	virtual FGuid GetGridGuid() const override;
+	void SetGridGuid(const FGuid& InGuid);
 #endif
 	//~ End APartitionActor Overrides
 
-	static UE_API void UpdateInstanceStats(int32 InstanceCount, EArsInstancedActorsBulkLOD LODMode, bool Increment);
+	static void UpdateInstanceStats(int32 InstanceCount, EArsInstancedActorsBulkLOD LODMode, bool Increment);
 
 	/**
 	 * Registers Components as related to InstanceData for IActorInstanceManagerInterface-related purposes.
 	 */
-	UE_API void RegisterInstanceDatasComponents(const UArsInstancedActorsData& InstanceData, TConstArrayView<TObjectPtr<UInstancedStaticMeshComponent>> Components);
+	void RegisterInstanceDatasComponents(const UArsInstancedActorsData& InstanceData, TConstArrayView<TObjectPtr<UInstancedStaticMeshComponent>> Components);
 
 	/**
 	 * Unregisters Component from IActorInstanceManagerInterface-related tracking. Note that the function will assert
 	 * whether the Component has been registered in the first place
 	 */
-	UE_API void UnregisterInstanceDatasComponent(UInstancedStaticMeshComponent& Component);
+	void UnregisterInstanceDatasComponent(UInstancedStaticMeshComponent& Component);
 
-	UE_API virtual void CreateISMComponents(const FArsInstancedActorsVisualizationDesc& VisualizationDesc, FConstSharedStruct SharedSettings
+	virtual void CreateISMComponents(const FArsInstancedActorsVisualizationDesc& VisualizationDesc, FConstSharedStruct SharedSettings
 		, TArray<TObjectPtr<UInstancedStaticMeshComponent>>& OutComponents, const bool bEditorPreviewISMCs = false);
 
 	//~ Begin UObject Overrides
-	UE_API virtual void Serialize(FStructuredArchive::FRecord Record) override;
+	virtual void Serialize(FStructuredArchive::FRecord Record) override;
 	//~ End UObject Overrides
 
 protected:
@@ -261,25 +262,25 @@ protected:
 
 	//~ Begin AActor Overrides
 #if UE_WITH_IRIS
-	UE_API virtual void BeginReplication() override;
+	virtual void BeginReplication() override;
 #endif
-	UE_API virtual void BeginPlay() override;
-	UE_API virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	UE_API virtual bool IsHLODRelevant() const override;
-	UE_API virtual void PostLoad() override;
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual bool IsHLODRelevant() const override;
+	virtual void PostLoad() override;
 #if WITH_EDITOR
 	virtual bool IsUserManaged() const override { return true; }
-	UE_API virtual void GetStreamingBounds(FBox& OutRuntimeBounds, FBox& OutEditorBounds) const override;
+	virtual void GetStreamingBounds(FBox& OutRuntimeBounds, FBox& OutEditorBounds) const override;
 #endif
 	//~ End AActor Overrides
 
 	//~ Begin IActorInstanceManagerInterface Overrides
-	UE_API virtual int32 ConvertCollisionIndexToInstanceIndex(int32 InIndex, const UPrimitiveComponent* RelevantComponent) const override;
-	UE_API virtual AActor* FindActor(const FActorInstanceHandle& Handle) override;
-	UE_API virtual AActor* FindOrCreateActor(const FActorInstanceHandle& Handle) override;
-	UE_API virtual UClass* GetRepresentedClass(const int32 InstanceIndex) const override;
-	UE_API virtual ULevel* GetLevelForInstance(const int32 InstanceIndex) const override;
-	UE_API virtual FTransform GetTransform(const FActorInstanceHandle& Handle) const override;
+	virtual int32 ConvertCollisionIndexToInstanceIndex(int32 InIndex, const UPrimitiveComponent* RelevantComponent) const override;
+	virtual AActor* FindActor(const FActorInstanceHandle& Handle) override;
+	virtual AActor* FindOrCreateActor(const FActorInstanceHandle& Handle) override;
+	virtual UClass* GetRepresentedClass(const int32 InstanceIndex) const override;
+	virtual ULevel* GetLevelForInstance(const int32 InstanceIndex) const override;
+	virtual FTransform GetTransform(const FActorInstanceHandle& Handle) const override;
 	//~ End IActorInstanceManagerInterface Overrides
 
 	/** 
@@ -289,37 +290,37 @@ protected:
 	 * 						In this case, we still need to read Record to seek the archive past this IAD record consistently.
 	 * @param TimeDelta		Real time in seconds since serialization (0 when saving)
 	 */
-	UE_API void SerializeInstancePersistenceData(FStructuredArchive::FRecord Record, UArsInstancedActorsData* InstanceData, int64 TimeDelta) const;
+	void SerializeInstancePersistenceData(FStructuredArchive::FRecord Record, UArsInstancedActorsData* InstanceData, int64 TimeDelta) const;
 
 	/** Despawns all entities spawned by individual UArsInstancedActorsData instances. */
-	UE_API virtual void DespawnAllEntities();
+	virtual void DespawnAllEntities();
 
 	/** Attempts to run any 'pending' modifiers in ModifierVolumes where are appropriate to run given HasSpawnedEntities
 	 * Called in BeginPlay prior to, and then again after SpawnEntities. Also called in AddModifierVolume.
 	 * @see UArsInstancedActorsModifierBase::bRequiresSpawnedEntities
 	 */
-	UE_API void TryRunPendingModifiers();
+	void TryRunPendingModifiers();
 
 	/** Called when persistent data has been applied / restored */
-	UE_API void OnPersistentDataRestored();
+	void OnPersistentDataRestored();
 
 	/** Calculate cumulative local space instance bounds for all PerActorClassInstanceData */
-	UE_API FBox CalculateLocalInstanceBounds() const;
+	FBox CalculateLocalInstanceBounds() const;
 
 #if WITH_EDITOR
 public:
 	/** Helper function to create and initialize per-actor-class UArsInstancedActorsData's, optionally further partitioned by AdditionalInstanceTags */
-	UE_API UArsInstancedActorsData& GetOrCreateActorInstanceData(TSubclassOf<AActor> ActorClass, const FArsInstancedActorsTagSet& AdditionalInstanceTags, bool bCreateEditorPreviewISMCs = true);
+	UArsInstancedActorsData& GetOrCreateActorInstanceData(TSubclassOf<AActor> ActorClass, const FArsInstancedActorsTagSet& AdditionalInstanceTags, bool bCreateEditorPreviewISMCs = true);
 
 protected:
-	UE_API virtual UArsInstancedActorsData* CreateNextInstanceActorData(TSubclassOf<AActor> ActorClass, const FArsInstancedActorsTagSet& AdditionalInstanceTags);
+	virtual UArsInstancedActorsData* CreateNextInstanceActorData(TSubclassOf<AActor> ActorClass, const FArsInstancedActorsTagSet& AdditionalInstanceTags);
 
 	/** Used to set the right properties on the editor ISMCs so we can do per-instance selection. */
-	UE_API virtual void PreRegisterAllComponents() override;
+	virtual void PreRegisterAllComponents() override;
 #endif
 
 	/** Configures given ISMComponent for editor-preview purposes */
-	static UE_API void SetUpEditorPreviewISMComponent(TNotNull<UInstancedStaticMeshComponent*> ISMComponent);
+	static void SetUpEditorPreviewISMComponent(TNotNull<UInstancedStaticMeshComponent*> ISMComponent);
 
 	UPROPERTY(Transient)
 	TObjectPtr<UArsInstancedActorsSubsystem> InstancedActorSubsystem;
@@ -396,29 +397,29 @@ private:
 #endif
 
 	//~ Begin ISMInstanceManager Overrides
-	UE_API virtual FText GetSMInstanceDisplayName(const FSMInstanceId& InstanceId) const override;
-	UE_API virtual FText GetSMInstanceTooltip(const FSMInstanceId& InstanceId) const override;
-	UE_API virtual bool CanEditSMInstance(const FSMInstanceId& InstanceId) const override;
-	UE_API virtual bool CanMoveSMInstance(const FSMInstanceId& InstanceId, const ETypedElementWorldType WorldType) const override;
-	UE_API virtual bool GetSMInstanceTransform(const FSMInstanceId& InstanceId, FTransform& OutInstanceTransform, bool bWorldSpace = false) const override;
-	UE_API virtual bool SetSMInstanceTransform(const FSMInstanceId& InstanceId, const FTransform& InstanceTransform, bool bWorldSpace = false, bool bMarkRenderStateDirty = false, bool bTeleport = false) override;
-	UE_API virtual void NotifySMInstanceMovementStarted(const FSMInstanceId& InstanceId) override;
-	UE_API virtual void NotifySMInstanceMovementOngoing(const FSMInstanceId& InstanceId) override;
-	UE_API virtual void NotifySMInstanceMovementEnded(const FSMInstanceId& InstanceId) override;
-	UE_API virtual void NotifySMInstanceSelectionChanged(const FSMInstanceId& InstanceId, const bool bIsSelected) override;
-	UE_API virtual bool DeleteSMInstances(TArrayView<const FSMInstanceId> InstanceIds) override;
-	UE_API virtual bool DuplicateSMInstances(TArrayView<const FSMInstanceId> InstanceIds, TArray<FSMInstanceId>& OutNewInstanceIds) override;
+	virtual FText GetSMInstanceDisplayName(const FSMInstanceId& InstanceId) const override;
+	virtual FText GetSMInstanceTooltip(const FSMInstanceId& InstanceId) const override;
+	virtual bool CanEditSMInstance(const FSMInstanceId& InstanceId) const override;
+	virtual bool CanMoveSMInstance(const FSMInstanceId& InstanceId, const ETypedElementWorldType WorldType) const override;
+	virtual bool GetSMInstanceTransform(const FSMInstanceId& InstanceId, FTransform& OutInstanceTransform, bool bWorldSpace = false) const override;
+	virtual bool SetSMInstanceTransform(const FSMInstanceId& InstanceId, const FTransform& InstanceTransform, bool bWorldSpace = false, bool bMarkRenderStateDirty = false, bool bTeleport = false) override;
+	virtual void NotifySMInstanceMovementStarted(const FSMInstanceId& InstanceId) override;
+	virtual void NotifySMInstanceMovementOngoing(const FSMInstanceId& InstanceId) override;
+	virtual void NotifySMInstanceMovementEnded(const FSMInstanceId& InstanceId) override;
+	virtual void NotifySMInstanceSelectionChanged(const FSMInstanceId& InstanceId, const bool bIsSelected) override;
+	virtual bool DeleteSMInstances(TArrayView<const FSMInstanceId> InstanceIds) override;
+	virtual bool DuplicateSMInstances(TArrayView<const FSMInstanceId> InstanceIds, TArray<FSMInstanceId>& OutNewInstanceIds) override;
 	//~ End ISMInstanceManager Overrides
 
 	/**
 	 * Try to extract the actor from the provided handle or from associated Mass Entity.
 	 * When unable to retrieve it returns nullptr but also the associated EntityView so caller could reuse it to create the actor.
 	 */
-	UE_API AActor* FindActorInternal(const FActorInstanceHandle& Handle, FMassEntityView& OutEntityView, bool bEnsureOnMissingInstanceDataOrMassEntity) const;
+	AActor* FindActorInternal(const FActorInstanceHandle& Handle, FMassEntityView& OutEntityView, bool bEnsureOnMissingInstanceDataOrMassEntity) const;
 
-	UE_API AActor* GetActorForInstance(const UArsInstancedActorsData& InstanceData, const int32 InstancedActorIndex) const;
+	AActor* GetActorForInstance(const UArsInstancedActorsData& InstanceData, const int32 InstancedActorIndex) const;
 
-	UE_API FArsInstancedActorsInstanceHandle ActorInstanceHandleFromFSMInstanceId(const FSMInstanceId& InstanceId) const;
+	FArsInstancedActorsInstanceHandle ActorInstanceHandleFromFSMInstanceId(const FSMInstanceId& InstanceId) const;
 };
 
 
@@ -467,4 +468,3 @@ FORCEINLINE UArsInstancedActorsSubsystem& AArsInstancedActorsManager::GetInstanc
 	return *InstancedActorSubsystem;
 }
 
-#undef UE_API

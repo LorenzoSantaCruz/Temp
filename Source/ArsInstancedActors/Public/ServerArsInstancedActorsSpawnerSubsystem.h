@@ -2,11 +2,12 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "ArsInstancedActorsIndex.h"
 #include "MassActorSpawnerSubsystem.h"
 #include "ServerArsInstancedActorsSpawnerSubsystem.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 
 struct FMassEntityManager;
@@ -20,7 +21,7 @@ struct FActorSpawnParameters;
  * UArsInstancedActorsComponent instanced a newly spawned actor hosts. 
  */
 UCLASS(MinimalAPI)
-class UServerArsInstancedActorsSpawnerSubsystem : public UMassActorSpawnerSubsystem
+class ARSMECHANICA_API UServerArsInstancedActorsSpawnerSubsystem : public UMassActorSpawnerSubsystem
 {
 	GENERATED_BODY()
 
@@ -30,19 +31,19 @@ public:
 	 * Called by UArsInstancedActorsComponent::InitializeComponent to provide an opportunity, before BeginPlay, to
 	 * catch Instanced Actors we're spawning, to set their FMassEntityHandle association.
 	 */
-	UE_API void OnInstancedActorComponentInitialize(UArsInstancedActorsComponent& InstancedActorComponent) const;
+	void OnInstancedActorComponentInitialize(UArsInstancedActorsComponent& InstancedActorComponent) const;
 
 protected:
 
 	//~ Begin USubsystem Overrides
-	UE_API virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	UE_API virtual void Deinitialize() override;
-	UE_API virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
-	UE_API virtual bool ReleaseActorToPool(AActor* Actor) override;
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
+	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
+	virtual bool ReleaseActorToPool(AActor* Actor) override;
 	//~ Begin USubsystem Overrides
 	
 	//~ Begin UMassActorSpawnerSubsystem Overrides
-	UE_API virtual ESpawnRequestStatus SpawnActor(FConstStructView SpawnRequestView, TObjectPtr<AActor>& OutSpawnedActor, FActorSpawnParameters& InOutSpawnParameters) const override;
+	virtual ESpawnRequestStatus SpawnActor(FConstStructView SpawnRequestView, TObjectPtr<AActor>& OutSpawnedActor, FActorSpawnParameters& InOutSpawnParameters) const override;
     //~ End UMassActorSpawnerSubsystem Overrides
 
 	TSharedPtr<FMassEntityManager> EntityManager;
@@ -59,4 +60,3 @@ protected:
 	mutable FArsInstancedActorsInstanceHandle TransientActorSpawningInstance;
 };
 
-#undef UE_API

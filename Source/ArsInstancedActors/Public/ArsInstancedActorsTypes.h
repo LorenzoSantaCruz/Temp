@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ArsMechanicaAPI.h"
+
 #include "Logging/LogMacros.h"
 #include "GameplayTagContainer.h"
 #include "ISMPartition/ISMComponentDescriptor.h"
@@ -10,10 +12,9 @@
 #include "ArsInstancedActorsIndex.h"
 #include "ArsInstancedActorsTypes.generated.h"
 
-#define UE_API ARSINSTANCEDACTORS_API
 
 
-ARSINSTANCEDACTORS_API DECLARE_LOG_CATEGORY_EXTERN(LogArsInstancedActors, Log, All)
+DECLARE_LOG_CATEGORY_EXTERN(LogArsInstancedActors, Log, All)
 
 struct FStaticMeshInstanceVisualizationDesc;
 struct FStreamableHandle;
@@ -60,15 +61,15 @@ ENUM_CLASS_FLAGS(EArsInstancedActorsFragmentFlags);
 
 namespace UE::ArsInstancedActors::Utils
 {
-	ARSINSTANCEDACTORS_API TSubclassOf<UMassActorSpawnerSubsystem> DetermineActorSpawnerSubsystemClass(const UWorld& World);
-	ARSINSTANCEDACTORS_API UServerArsInstancedActorsSpawnerSubsystem* GetServerArsInstancedActorsSpawnerSubsystem(const UWorld& World);
-	ARSINSTANCEDACTORS_API UClientArsInstancedActorsSpawnerSubsystem* GetClientArsInstancedActorsSpawnerSubsystem(const UWorld& World);
+	TSubclassOf<UMassActorSpawnerSubsystem> DetermineActorSpawnerSubsystemClass(const UWorld& World);
+	UServerArsInstancedActorsSpawnerSubsystem* GetServerArsInstancedActorsSpawnerSubsystem(const UWorld& World);
+	UClientArsInstancedActorsSpawnerSubsystem* GetClientArsInstancedActorsSpawnerSubsystem(const UWorld& World);
 	/** 
 	 * Calls either GetServerArsInstancedActorsSpawnerSubsystem or GetClientArsInstancedActorsSpawnerSubsystem, depending on 
 	 * given UWorld's net mode.
 	 */
-	ARSINSTANCEDACTORS_API UMassActorSpawnerSubsystem* GetActorSpawnerSubsystem(const UWorld& World);
-	ARSINSTANCEDACTORS_API UArsInstancedActorsSubsystem* GetArsInstancedActorsSubsystem(const UWorld& World);
+	UMassActorSpawnerSubsystem* GetActorSpawnerSubsystem(const UWorld& World);
+	UArsInstancedActorsSubsystem* GetArsInstancedActorsSubsystem(const UWorld& World);
 }
 
 // FArsInstancedActorsTagSet -> FArsInstancedActorsTagSet
@@ -79,13 +80,13 @@ struct FArsInstancedActorsTagSet
 	GENERATED_BODY()
 
 	FArsInstancedActorsTagSet() = default;
-	UE_API FArsInstancedActorsTagSet(const FGameplayTagContainer& InTags);
+	FArsInstancedActorsTagSet(const FGameplayTagContainer& InTags);
 
 	bool IsEmpty() const { return Tags.IsEmpty(); }
 
 	const FGameplayTagContainer& GetTags() const { return Tags; }
 	
-	UE_API void CalcHash();
+	void CalcHash();
 
 	bool operator==(const FArsInstancedActorsTagSet& OtherTagSet) const
 	{
@@ -131,7 +132,7 @@ struct FArsInstancedActorsVisualizationDesc
 	GENERATED_BODY()
 
 	FArsInstancedActorsVisualizationDesc() = default;
-	UE_API explicit FArsInstancedActorsVisualizationDesc(const FArsInstancedActorsSoftVisualizationDesc& SoftVisualizationDesc);
+	explicit FArsInstancedActorsVisualizationDesc(const FArsInstancedActorsSoftVisualizationDesc& SoftVisualizationDesc);
 
 	/**
 	 * Array of Instanced Static Mesh Component descriptors. An ISMC will be created for each of these, using the specified mesh, material,
@@ -148,7 +149,7 @@ struct FArsInstancedActorsVisualizationDesc
 	using FVisualizationDescSetupFunction = TFunctionRef<void(const AActor& /*ExemplarActor*/, FArsInstancedActorsVisualizationDesc& /*OutVisualization*/)>;
 	
 	UE_DEPRECATED(5.6, "Using FAdditionalSetupStepsFunction which takes a FISMComponentDescriptor& parameter is deprecated. Use FVisualizationDescSetupFunction instead, since FArsInstancedActorsVisualizationDesc already contains the built TArray of FISMComponentDescriptor")
-	static UE_API FArsInstancedActorsVisualizationDesc FromActor(const AActor& ExemplarActor, const FAdditionalSetupStepsFunction& AdditionalSetupSteps);
+	static FArsInstancedActorsVisualizationDesc FromActor(const AActor& ExemplarActor, const FAdditionalSetupStepsFunction& AdditionalSetupSteps);
 	
 	/**
 	 * Helper function to deduce appropriate instanced static mesh representation for an ActorClass exemplar actor.
@@ -158,9 +159,9 @@ struct FArsInstancedActorsVisualizationDesc
 	 *	StaticMeshComponent with a valid StaticMesh configured.
 	 * @see UArsInstancedActorsSubsystem::GetOrCreateExemplarActor
 	 */	
-	static UE_API FArsInstancedActorsVisualizationDesc FromActor(const AActor& ExemplarActor, const FVisualizationDescSetupFunction& AdditionalSetupFunction = [](const AActor& /*ExemplarActor*/, FArsInstancedActorsVisualizationDesc& /*OutVisualization*/){});
+	static FArsInstancedActorsVisualizationDesc FromActor(const AActor& ExemplarActor, const FVisualizationDescSetupFunction& AdditionalSetupFunction = [](const AActor& /*ExemplarActor*/, FArsInstancedActorsVisualizationDesc& /*OutVisualization*/){});
 
-	UE_API FStaticMeshInstanceVisualizationDesc ToMassVisualizationDesc() const;
+	FStaticMeshInstanceVisualizationDesc ToMassVisualizationDesc() const;
 
 	friend inline uint32 GetTypeHash(const FArsInstancedActorsVisualizationDesc& InDesc)
 	{
@@ -183,7 +184,7 @@ struct FArsInstancedActorsSoftVisualizationDesc
 	GENERATED_BODY()
 
 	FArsInstancedActorsSoftVisualizationDesc() = default;
-	UE_API explicit FArsInstancedActorsSoftVisualizationDesc(const FArsInstancedActorsVisualizationDesc& VisualizationDesc);
+	explicit FArsInstancedActorsSoftVisualizationDesc(const FArsInstancedActorsVisualizationDesc& VisualizationDesc);
 
 	/**
 	 * Array of Instanced Static Mesh Component descriptors. An ISMC will be created for each of these, using the specified mesh, material,
@@ -193,7 +194,7 @@ struct FArsInstancedActorsSoftVisualizationDesc
 	UPROPERTY(VisibleAnywhere, Category = ArsInstancedActors)
 	TArray<FSoftISMComponentDescriptor> ISMComponentDescriptors;
 
-	UE_API void GetAssetsToLoad(TArray<FSoftObjectPath>& OutAssetsToLoad) const;
+	void GetAssetsToLoad(TArray<FSoftObjectPath>& OutAssetsToLoad) const;
 };
 
 
@@ -350,4 +351,3 @@ struct FArsInstancedActorsFragment : public FMassFragment
 	FArsInstancedActorsInstanceIndex InstanceIndex;
 };
 
-#undef UE_API
