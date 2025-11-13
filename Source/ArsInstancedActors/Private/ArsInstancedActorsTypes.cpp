@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright (c) 2024 Lorenzo Santa Cruz. All rights reserved.
 
 #include "ArsInstancedActorsTypes.h"
 #include "Components/InstancedStaticMeshComponent.h"

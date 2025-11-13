@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright (c) 2024 Lorenzo Santa Cruz. All rights reserved.
 
 #include "GameFeatureAction_ConfigureArsInstancedActors.h"
 #include "ArsInstancedActorsSettings.h"
